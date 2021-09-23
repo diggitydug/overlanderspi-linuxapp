@@ -9,23 +9,28 @@ from os import path
 
 from wx.core import Width
 
+config = configparser.ConfigParser()
+
+config_mode = 'DEFAULT'
+
 #Called when application detects no config 
 #file and creates it with default settings
 def new_config():
-    config = configparser.ConfigParser()
     #Add new default configs here
     config['DEFAULT'] = {
         'WindowMode':'fullscreen',
         'Resolution': {
             'width': 800,
             'height':480
-        }
+        },
     }
     with open('config.txt', 'w') as configfile:
         config.write(configfile)
 
 
 if (path.exists('config.txt')):
-    pass
+    config.read('config.txt')
+    for key in config['DEFAULT']:
+        print(key)
 else:
     new_config()
