@@ -1,13 +1,19 @@
-import PySimpleGUIWx as sg
+import PySimpleGUI as sg
 from layout import *
+import constant
 
-layout = menu()
+layout = [layout_header()]
 
-window = sg.Window('Overlander\'s Pi', layout,no_titlebar=False,location=(0,10),size=(800,480))
+for element in menu():
+    layout.append(element)
+
+
+
+window = sg.Window('Overlander\'s Pi', layout ,no_titlebar=False,location=(0,10),size=(800,480))
 
 while True:
     event, values = window.read()
-    if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
+    if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks exit
         break
     
 window.close()
