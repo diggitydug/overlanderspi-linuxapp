@@ -2,6 +2,8 @@
 Repository for the linux app of the Overlanders Pi Project
 
 # Configuring the Dev Environment
+Note: The environment requires python 3.9 
+
 First install the pipenv package:
 `pip install pipenv`
 
