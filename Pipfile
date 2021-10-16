@@ -5,9 +5,14 @@ name = "pypi"
 
 [packages]
 requests = "*"
-pysimplegui = "*"
+numpy = "*"
+matplotlib = "*"
+pillow = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
+
+[packages.5fbe1dc]
+file = "https://github.com/matplotlib/basemap/archive/master.zip"
