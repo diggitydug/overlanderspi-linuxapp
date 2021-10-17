@@ -14,4 +14,6 @@ Install the pipenv package to handle the rest of the dependencies:
 Next navigate to the directory that this project was cloned to and from the terminal run:
 `pipenv install`
 
-Which snippet to use depends on how python is installed on your system
+This will should install necessary dependencies.
+
+Run main.py to experience the application
