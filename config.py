@@ -23,6 +23,7 @@ def new_config():
             'width': 800,
             'height':480
         },
+        'Caching':'True'
     }
     with open('config.txt', 'w') as configfile:
         config.write(configfile)
