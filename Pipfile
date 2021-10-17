@@ -7,7 +7,10 @@ name = "pypi"
 requests = "*"
 numpy = "*"
 matplotlib = "*"
-pillow = "*"
+Pillow = "*"
+pycairo = "*"
+PyGObject = "*"
+imageio = "*"
 
 [dev-packages]
 
