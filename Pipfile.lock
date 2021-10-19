@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9999aeee153665c83e8687901018790c2c0adcc0497b0c0993a373417f6548be"
+            "sha256": "47157892dea128ba1a5f25122fff86cbb6ca8f77b2782c73f715a5a063047a83"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,9 +16,6 @@
         ]
     },
     "default": {
-        "5fbe1dc": {
-            "file": "https://github.com/matplotlib/basemap/archive/master.zip"
-        },
         "certifi": {
             "hashes": [
                 "sha256:78884e7c1d4b00ce3cea67b44566851c4343c120abd683433ce934a68ea58872",
