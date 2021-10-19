@@ -1,3 +1,5 @@
+import matplotlib  
+matplotlib.use('TkAgg') 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_gtk3agg import (
     FigureCanvasGTK3Agg as FigureCanvas)
