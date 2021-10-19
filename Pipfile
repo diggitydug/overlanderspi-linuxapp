@@ -16,5 +16,3 @@ imageio = "*"
 
 [requires]
 python_version = "3.8"
-
-[packages.5fbe1dc]
