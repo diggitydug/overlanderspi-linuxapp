@@ -9,19 +9,10 @@ import math
 import requests
 from io import BytesIO
 from PIL import Image
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 import os.path
 import errno
 import imageio
-
-
-win = Gtk.Window()
-win.connect("delete-event", Gtk.main_quit)
-win.set_default_size(400,300)
-win.set_title("Overlander's Pi")
-
+from gps import *
 
 def deg2num(lat_deg, lon_deg, zoom):
   lat_rad = math.radians(lat_deg)
@@ -50,12 +41,18 @@ def cache_tile(filename, file):
     
     print("Saving file: " + filename)
 
+def delta_calc(zoom):
+    delta = 360.0/(2*zoom)
+    print("Delta is " + str(delta))
+    return delta
+
    
-def getImageCluster(lat_deg, lon_deg, delta_lat,  delta_long, zoom):
+def getImageCluster(lat_deg, lon_deg, zoom):
     headers = {"User-Agent":"overlanderspi/0.2 linux"}
     smurl = r"http://a.tile.openstreetmap.org/{0}/{1}/{2}.png"
+    delta = delta_calc(zoom)
     xmin, ymax =deg2num(lat_deg, lon_deg, zoom)
-    xmax, ymin =deg2num(lat_deg + delta_lat, lon_deg + delta_long, zoom)
+    xmax, ymin =deg2num(lat_deg + delta, lon_deg + delta, zoom)
     file = os.path.expanduser('~') + r"/Maps/OSM/{0}/{1}/{2}.png"
 
     Cluster = Image.new('RGB',((xmax-xmin+1)*256-1,(ymax-ymin+1)*256-1) ) 
@@ -80,22 +77,17 @@ def getImageCluster(lat_deg, lon_deg, delta_lat,  delta_long, zoom):
                     tile = None
    
     return Cluster
-    
 
-    
-if __name__ == '__main__':
-    a = getImageCluster(28.883, -112.632, 9.0,  9.0, 7)
+def get_figure(lat_deg, lon_deg, zoom):
+    a = getImageCluster(lat_deg, lon_deg, zoom)
+    figure = plt.figure()
+    figure.figimage(a)
+    return figure
 
-    #sw = Figure(figsize=(5,4), dpi=200)
-    #ax = sw.add_subplot()
-    #ax.imshow(np.asarray(a))
+#if __name__ == '__main__':
+    #a = getImageCluster(28.883, -112.632, 9.0,  9.0, 7)
 
-    #win.add(sw)
-
-    #win.show_all()
-    #Gtk.main()
-
-    fig1 = plt.figure()
-    fig1.patch.set_facecolor('white')
-    plt.imshow(np.asarray(a))
-    plt.show()
+    #fig1 = plt.figure()
+    #fig1.patch.set_facecolor('white')
+    #plt.imshow(np.asarray(a))
+    #plt.show()

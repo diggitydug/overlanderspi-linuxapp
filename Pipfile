@@ -11,6 +11,7 @@ Pillow = "*"
 pycairo = "*"
 PyGObject = "*"
 imageio = "*"
+gps = "*"
 
 [dev-packages]
 
