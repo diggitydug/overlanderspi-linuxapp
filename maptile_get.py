@@ -42,7 +42,7 @@ def cache_tile(filename, file):
     print("Saving file: " + filename)
 
 def delta_calc(zoom):
-    delta = 360.0/(2*zoom)
+    delta = 360.0/(2**zoom)
     print("Delta is " + str(delta))
     return delta
 

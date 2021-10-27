@@ -6,9 +6,11 @@ from matplotlib.backends.backend_gtk3agg import (
 from matplotlib.figure import Figure
 import numpy as np
 from maptile_get import get_figure
+from gps_handler import get_coordinates
 
 class Handler:
     def onDestroy(self, *args):
+        print("window destroyed")
         Gtk.main_quit()
 
     def close_butt(self, button):
@@ -21,13 +23,14 @@ builder.connect_signals(Handler())
 
 window = builder.get_object("main_window")
 
-
 scroll_window = builder.get_object("scroll")
-image = builder.get_object("image")
+viewport = builder.get_object("view")
 
-figure = get_figure(28.883, -112.632, 7)
+lat, lon = get_coordinates()
 
-scroll_window.add(FigureCanvas(figure))
+figure = get_figure(lat, lon, 4)
+
+viewport.add(FigureCanvas(figure))
 
 window.show_all()
 Gtk.main()

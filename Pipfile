@@ -12,6 +12,8 @@ pycairo = "*"
 PyGObject = "*"
 imageio = "*"
 gps = "*"
+pynmea2 = "*"
+serial = "*"
 
 [dev-packages]
 
