@@ -1,17 +1,12 @@
 import matplotlib  
 matplotlib.use('TkAgg') 
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_gtk3agg import (
-    FigureCanvasGTK3Agg as FigureCanvas)
-from matplotlib.figure import Figure
-import numpy as np
 import math
 import requests
 from io import BytesIO
 from PIL import Image
 import os.path
 import errno
-import imageio
 from gps import *
 
 def deg2num(lat_deg, lon_deg, zoom):
@@ -42,7 +37,7 @@ def cache_tile(filename, file):
     print("Saving file: " + filename)
 
 def delta_calc(zoom):
-    delta = 360.0/(2**zoom)
+    delta = 360.0/(2*zoom)
     print("Delta is " + str(delta))
     return delta
 
@@ -60,14 +55,14 @@ def getImageCluster(lat_deg, lon_deg, zoom):
         for ytile in range(ymin,  ymax+1):
             filestr = file.format(zoom, xtile, ytile)
             if (os.path.isfile(filestr)):
-                print("Loading tile: " + filestr + " from cache")
+                #print("Loading tile: " + filestr + " from cache")
                 tile = Image.open(filestr)
                 Cluster.paste(tile, box = ((xtile-xmin)*256 ,  (ytile-ymin)*255))
             else:
-                print("Tile not found locally, downloading from server.")
+                #print("Tile not found locally, downloading from server.")
                 try:
                     imgurl = smurl.format(zoom, xtile, ytile)
-                    print("Opening: " + imgurl)
+                    #print("Opening: " + imgurl)
                     imgstr = requests.get(imgurl, headers=headers, allow_redirects=True)
                     tile = Image.open(BytesIO(imgstr.content))
                     Cluster.paste(tile, box = ((xtile-xmin)*256 ,  (ytile-ymin)*255))

@@ -7,30 +7,27 @@ from matplotlib.figure import Figure
 import numpy as np
 from maptile_get import get_figure
 from gps_handler import get_coordinates
+from gui_event_handler import Gui_Event_Handler
+import config
 
-class Handler:
-    def onDestroy(self, *args):
-        print("window destroyed")
-        Gtk.main_quit()
-
-    def close_butt(self, button):
-        print("Time to close")
-        Gtk.main_quit()
-
+glade_file = "gui.glade"
 builder = Gtk.Builder()
-builder.add_from_file("gui.glade")
-builder.connect_signals(Handler())
+builder.add_from_file(glade_file)
+builder.connect_signals(Gui_Event_Handler())
 
-window = builder.get_object("main_window")
-
-scroll_window = builder.get_object("scroll")
 viewport = builder.get_object("view")
 
-lat, lon = get_coordinates()
-
-figure = get_figure(lat, lon, 4)
+default_lat, default_lon = config.get_config('default loc')
+current_lat, current_lon = get_coordinates()
+zoom = int(config.get_config('default zoom'))
+figure = get_figure(default_lat, default_lon, zoom)
 
 viewport.add(FigureCanvas(figure))
 
+window = builder.get_object("main_window")
 window.show_all()
 Gtk.main()
+
+#def set
+#def map_draw():
+    
