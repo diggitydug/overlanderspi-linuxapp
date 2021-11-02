@@ -28,6 +28,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="zoom_in" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -41,6 +42,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="zoom_out" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -55,6 +57,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="start_record" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -68,6 +71,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="open_settings" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -93,7 +97,11 @@
               <object class="GtkViewport" id="view">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <signal name="draw" handler="drawmap" swapped="no"/>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscroll_policy">natural</property>
+                <property name="vscroll_policy">natural</property>
+                <signal name="draw" handler="map_resolution" swapped="no"/>
                 <child>
                   <placeholder/>
                 </child>
