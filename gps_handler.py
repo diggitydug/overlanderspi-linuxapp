@@ -6,4 +6,4 @@ import pynmea2
 #the get_coordinates function
 
 def get_coordinates():
-    return 20, -135
+    return None, None

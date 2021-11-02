@@ -9,6 +9,7 @@
     <property name="default_width">800</property>
     <property name="default_height">480</property>
     <property name="gravity">center</property>
+    <signal name="destroy" handler="exit" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>
@@ -22,26 +23,12 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkButton" id="close">
-                <property name="label" translatable="yes">  Close 
-Window</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="close_butt" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="zoom_in">
                 <property name="label" translatable="yes">+</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="zoom_in" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -55,6 +42,7 @@ Window</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="zoom_out" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -69,6 +57,7 @@ Window</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="start_record" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -82,6 +71,7 @@ Window</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="open_settings" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -107,6 +97,11 @@ Window</property>
               <object class="GtkViewport" id="view">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscroll_policy">natural</property>
+                <property name="vscroll_policy">natural</property>
+                <signal name="draw" handler="map_resolution" swapped="no"/>
                 <child>
                   <placeholder/>
                 </child>

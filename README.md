@@ -6,7 +6,7 @@ Note: Development has been set up in Ubuntu 20.04 with Python 3.8
 Linux environment recommended for development due to requirements
 
 To install dev dependencies run the command 
-`sudo apt install libgirepository1.0-dev python3-gi pipenv`
+`sudo apt install libgirepository1.0-dev python3-gi pipenv python3-tk`
 
 Install the pipenv package to handle the rest of the dependencies:
 `pip install pycairo PyGObject`
