@@ -2,6 +2,31 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage" id="record_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/record.png</property>
+  </object>
+  <object class="GtkImage" id="settings_img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/settings.png</property>
+  </object>
+  <object class="GtkImage" id="stop_record_img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/stop.png</property>
+  </object>
+  <object class="GtkImage" id="zoom_in_img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/zoom_in.png</property>
+  </object>
+  <object class="GtkImage" id="zoom_out_img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/zoom_out.png</property>
+  </object>
   <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Overlander's Pi</property>
@@ -14,7 +39,7 @@
       <placeholder/>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="map_view">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -23,11 +48,12 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkButton" id="zoom_in">
-                <property name="label" translatable="yes">+</property>
+              <object class="GtkButton" id="zoom_in_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">zoom_in_img</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="zoom_in" swapped="no"/>
               </object>
               <packing>
@@ -37,11 +63,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="zoom_out">
-                <property name="label" translatable="yes">-</property>
+              <object class="GtkButton" id="zoom_out_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">zoom_out_img</property>
                 <signal name="clicked" handler="zoom_out" swapped="no"/>
               </object>
               <packing>
@@ -52,12 +78,11 @@
             </child>
             <child>
               <object class="GtkButton" id="record_button">
-                <property name="label" translatable="yes">Record
-  Track</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="start_record" swapped="no"/>
+                <property name="image">record_image</property>
+                <signal name="clicked" handler="toggle_record" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -67,10 +92,10 @@
             </child>
             <child>
               <object class="GtkButton" id="settings_button">
-                <property name="label" translatable="yes">Settings</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">settings_img</property>
                 <signal name="clicked" handler="open_settings" swapped="no"/>
               </object>
               <packing>
@@ -101,6 +126,8 @@
                 <property name="vexpand">True</property>
                 <property name="hscroll_policy">natural</property>
                 <property name="vscroll_policy">natural</property>
+                <signal name="button-press-event" handler="drag_start" swapped="no"/>
+                <signal name="drag-motion" handler="drag_test" swapped="no"/>
                 <signal name="draw" handler="map_resolution" swapped="no"/>
                 <child>
                   <placeholder/>
