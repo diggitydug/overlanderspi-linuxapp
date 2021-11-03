@@ -283,6 +283,7 @@
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">480</property>
+    <property name="icon">icons/logo.png</property>
     <property name="gravity">center</property>
     <signal name="destroy" handler="exit" swapped="no"/>
     <child type="titlebar">
