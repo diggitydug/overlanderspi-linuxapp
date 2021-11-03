@@ -45,7 +45,7 @@ def tile_calc(zoom,resolution):
     delta_lon = 360.0/(2**zoom)
     delta_lat = 180/(2**zoom)
     size_comp_x = int(math.ceil(resolution[0]/256.0)) - 3
-    size_comp_y = int(math.ceil(resolution[0]/256.0)) - 2
+    size_comp_y = int(math.ceil(resolution[1]/256.0)) - 2
     xtiles = int(math.ceil(resolution[0]/256.0))+size_comp_x
     ytiles = int(math.ceil(resolution[1]/256.0))+size_comp_y
     long_offset = delta_lon/2 * xtiles
