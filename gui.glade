@@ -22,7 +22,7 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/x.png</property>
   </object>
-  <object class="GtkBox" id="settings">
+  <object class="GtkBox" id="settings_view">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>

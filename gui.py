@@ -120,7 +120,7 @@ class Gui_Event_Handler:
 
     def zoom_out(self, *args):
         global zoom
-        if zoom >2:
+        if zoom >4:
             zoom = zoom -1
             print("Zoomed to level: " + str(zoom))
             get_tiles()
