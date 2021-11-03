@@ -15,7 +15,8 @@ default_config = {
         'resolution_height': '480',
         'caching':'True',
         'default zoom': '9',
-        'default loc': '33.307161,-111.681168'
+        'default loc': '33.307161,-111.681168',
+        'gps path': '/dev/ttyACM0'
     }
 
 #Called when application detects no config 
@@ -29,6 +30,8 @@ def new_config():
 if (path.exists('config.txt')):
     config_parser.read('config.txt')
     update_default = False
+    for config in default_config:
+        print(config)
     for config in config_parser['DEFAULT']:
         if not (config_parser['DEFAULT'][config] == default_config[config]):
             update_default = True

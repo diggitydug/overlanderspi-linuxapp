@@ -42,20 +42,23 @@ def cache_tile(filename, file):
         return
 
 def tile_calc(zoom,resolution):
-    delta = 360.0/(2**zoom)
-    xtiles = math.ceil(resolution[1]/256)
-    ytiles = math.ceil(resolution[0]/256)
-    x_offset = delta/2 * xtiles
-    y_offset = delta/2 *ytiles
-    return x_offset, y_offset
+    delta_lon = 360.0/(2**zoom)
+    delta_lat = 180/(2**zoom)
+    size_comp_x = int(math.ceil(resolution[0]/256.0)) - 3
+    size_comp_y = int(math.ceil(resolution[1]/256.0)) - 2
+    xtiles = int(math.ceil(resolution[0]/256.0))+size_comp_x
+    ytiles = int(math.ceil(resolution[1]/256.0))+size_comp_y
+    long_offset = delta_lon/2 * xtiles
+    lat_offset = delta_lat/2 *ytiles
+    return lat_offset, long_offset
 
    
 def getImageCluster(lat_deg, lon_deg, zoom, resolution):
     headers = {"User-Agent":"overlanderspi/0.4 linux"}
     smurl = r"http://a.tile.openstreetmap.org/{0}/{1}/{2}.png"
-    delta_x, delta_y = tile_calc(zoom,resolution)
-    xmin, ymax =deg2num(lat_deg-delta_x, lon_deg -delta_y, zoom)
-    xmax, ymin =deg2num(lat_deg + delta_x, lon_deg + delta_y, zoom)
+    delta_lat, delta_lon = tile_calc(zoom,resolution)
+    xmin, ymax =deg2num(lat_deg-delta_lat, lon_deg - delta_lon, zoom)
+    xmax, ymin =deg2num(lat_deg + delta_lat, lon_deg + delta_lon, zoom)
     file = os.path.expanduser('~') + r"/Maps/OSM/{0}/{1}/{2}.png"
 
     Cluster = Image.new('RGB',((xmax-xmin+1)*256-1,(ymax-ymin+1)*256-1) ) 
