@@ -57,6 +57,9 @@ def RoundToNearestMultiple(i, m):
         return (i/m+1)*m
     return i/m*m
 
+def exit_settings():
+    print("Exiting Settings")
+
 def get_tiles():
     figure = None
     if (physical_lat is not None and physical_lon is not None):
@@ -175,6 +178,13 @@ class Gui_Event_Handler:
 
     def drag_test(self, *args):
         print(args)
+
+    def save_settings(self, *args):
+        print("Saving settings")
+        exit_settings()
+
+    def exit_settings(self, *args):
+        exit_settings()
 
 
 def start_gui():
