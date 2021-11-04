@@ -61,17 +61,12 @@ def exit_settings():
     print("Exiting Settings")
 
 def get_tiles():
-    figure = None
-    if (physical_lat is not None and physical_lon is not None):
-        figure = FigureCanvas(maptiler.get_figure(physical_lat, physical_lon, zoom, resolution))
-    else:
-        figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
+    figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
 
     for mapimg in viewport.get_children():
         matplotlib.pyplot.close('all')
         viewport.remove(mapimg)
         
-    
     viewport.add(figure)
     
     viewport.queue_draw()
@@ -185,6 +180,26 @@ class Gui_Event_Handler:
 
     def exit_settings(self, *args):
         exit_settings()
+
+    def move_to_pin(self, *args):
+        print('Moving map location')
+        global physical_lat
+        global physical_lon
+        physical_lat, physical_lon = get_coordinates()
+        if (physical_lat is not None and physical_lon is not None):
+            figure = FigureCanvas(maptiler.get_figure(physical_lat, physical_lon, zoom, resolution))
+        else:
+            figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
+
+        for mapimg in viewport.get_children():
+            matplotlib.pyplot.close('all')
+            viewport.remove(mapimg)
+        
+        viewport.add(figure)
+    
+        viewport.queue_draw()
+        window.show_all()
+        update_gui()
 
 
 def start_gui():

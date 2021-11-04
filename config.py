@@ -30,8 +30,6 @@ def new_config():
 if (path.exists('config.txt')):
     config_parser.read('config.txt')
     update_default = False
-    for config in default_config:
-        print(config)
     for config in config_parser['DEFAULT']:
         if not (config_parser['DEFAULT'][config] == default_config[config]):
             update_default = True
@@ -54,3 +52,11 @@ def get_config(attribute):
             return value
         except:
             print("You put the wrong setting")
+
+def set_config(attribute, value):
+    try:
+        config_parser['USER'][attribute] = value
+        with open('config.txt', 'w') as configfile:
+            config_parser.write(configfile)
+    except:
+        print('Could not update settings')
