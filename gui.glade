@@ -2,6 +2,18 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="default_lat_adjust">
+    <property name="lower">-180</property>
+    <property name="upper">180</property>
+    <property name="step_increment">0.0099999997764825821</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="default_lon_adjust">
+    <property name="lower">-180</property>
+    <property name="upper">180</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkImage" id="pin_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -11,6 +23,16 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/record.png</property>
+  </object>
+  <object class="GtkLabel" id="setting_error_message">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="valign">end</property>
+    <property name="label" translatable="yes">Settings error</property>
+    <attributes>
+      <attribute name="weight" value="bold"/>
+      <attribute name="foreground" value="#efef29292929"/>
+    </attributes>
   </object>
   <object class="GtkImage" id="settings_img">
     <property name="visible">True</property>
@@ -26,6 +48,12 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">icons/x.png</property>
+  </object>
+  <object class="GtkAdjustment" id="zoom_adjustment">
+    <property name="lower">5</property>
+    <property name="upper">19</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkBox" id="settings_view">
     <property name="visible">True</property>
@@ -68,7 +96,7 @@
         </child>
       </object>
       <packing>
-        <property name="expand">True</property>
+        <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="padding">5</property>
         <property name="position">0</property>
@@ -86,7 +114,7 @@
             <property name="label" translatable="yes">Enable image caching</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
@@ -101,6 +129,8 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -108,6 +138,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
+        <property name="padding">2</property>
         <property name="position">1</property>
       </packing>
     </child>
@@ -123,22 +154,29 @@
             <property name="label" translatable="yes">Default zoom</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry">
+          <object class="GtkSpinButton" id="zoom_setting">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="max_length">2</property>
+            <property name="max_width_chars">2</property>
             <property name="input_purpose">number</property>
+            <property name="adjustment">zoom_adjustment</property>
+            <property name="climb_rate">1</property>
+            <property name="numeric">True</property>
+            <property name="value">3</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -146,6 +184,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
+        <property name="padding">2</property>
         <property name="position">2</property>
       </packing>
     </child>
@@ -161,20 +200,25 @@
             <property name="label" translatable="yes">Default Latitude</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry">
+          <object class="GtkSpinButton" id="default_lat_value">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="adjustment">default_lat_adjust</property>
+            <property name="climb_rate">0.25</property>
+            <property name="digits">6</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -182,6 +226,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
+        <property name="padding">2</property>
         <property name="position">3</property>
       </packing>
     </child>
@@ -197,20 +242,25 @@
             <property name="label" translatable="yes">Default Longitude</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry">
+          <object class="GtkSpinButton" id="default_lon_value">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="adjustment">default_lon_adjust</property>
+            <property name="climb_rate">0.25</property>
+            <property name="digits">6</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -218,6 +268,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
+        <property name="padding">2</property>
         <property name="position">4</property>
       </packing>
     </child>
@@ -232,20 +283,22 @@
             <property name="label" translatable="yes">Path to GPS Dongle</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkEntry">
+          <object class="GtkEntry" id="default_path">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -259,15 +312,19 @@
     <child>
       <object class="GtkButton" id="save_settings">
         <property name="label" translatable="yes">Save</property>
+        <property name="width_request">1</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
+        <property name="margin_left">20</property>
+        <property name="margin_right">20</property>
         <signal name="clicked" handler="save_settings" swapped="no"/>
       </object>
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="padding">5</property>
+        <property name="pack_type">end</property>
         <property name="position">6</property>
       </packing>
     </child>

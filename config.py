@@ -24,6 +24,7 @@ default_config = {
 def new_config():
     #Add new default configs here
     config_parser['DEFAULT'] = default_config
+    config_parser['USER'] = {}
     with open('config.txt', 'w') as configfile:
         config_parser.write(configfile)
 
@@ -42,20 +43,34 @@ if (path.exists('config.txt')):
 else:
     new_config()
 
+def get_user_attribute():
+    attributes = []
+    for config in config_parser['USER']:
+        attributes.append(config)
+    return attributes
+
 def get_config(attribute):
-    try:
-        value = config_parser['USER'][attribute]
-        return value
-    except:
+    if (attribute == 'caching'):
         try:
-            value = config_parser['DEFAULT'][attribute]
+            value = config_parser['USER'].getboolean(attribute)
             return value
         except:
-            print("You put the wrong setting")
+            value = config_parser['DEFAULT'].getboolean(attribute)
+            return value
+    else:
+        try:
+            value = config_parser['USER'][attribute]
+            return value
+        except:
+            try:
+                value = config_parser['DEFAULT'][attribute]
+                return value
+            except:
+                print("You put the wrong setting")
 
-def set_config(attribute, value):
+def set_config(values):
     try:
-        config_parser['USER'][attribute] = value
+        config_parser['USER'] = values
         with open('config.txt', 'w') as configfile:
             config_parser.write(configfile)
     except:

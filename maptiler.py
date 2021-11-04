@@ -44,10 +44,8 @@ def cache_tile(filename, file):
 def tile_calc(zoom,resolution):
     delta_lon = 360.0/(2**zoom)
     delta_lat = 180/(2**zoom)
-    size_comp_x = int(math.ceil(resolution[0]/256.0))-4
-    size_comp_y = int(math.ceil(resolution[1]/256.0))-3
-    xtiles = int(math.ceil(resolution[0]/256.0))+size_comp_x
-    ytiles = int(math.ceil(resolution[1]/256.0))+size_comp_y
+    xtiles = int(math.ceil(resolution[0]/256.0))
+    ytiles = int(math.ceil(resolution[1]/256.0))+1
     long_offset = delta_lon/2 * xtiles
     lat_offset = delta_lat/2 *ytiles
     return lat_offset, long_offset
