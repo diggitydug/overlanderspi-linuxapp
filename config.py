@@ -5,9 +5,13 @@
 
 import configparser
 from os import path, write
+import os
+import errno
 
 config_parser = configparser.ConfigParser()
 config_mode = 'DEFAULT'
+
+record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
 
 default_config = {
         'window mode':'fullscreen',
@@ -16,7 +20,9 @@ default_config = {
         'caching':'True',
         'default zoom': '9',
         'default loc': '33.307161,-111.681168',
-        'gps path': '/dev/ttyACM0'
+        'gps path': '/dev/ttyACM0',
+        'poll frequency':'30',
+        'recording path': record_path
     }
 
 #Called when application detects no config 
@@ -42,6 +48,14 @@ if (path.exists('config.txt')):
             config_parser.write(configfile)
 else:
     new_config()
+
+if not path.exists(os.path.dirname(record_path)):
+        try:
+            os.makedirs(os.path.dirname(record_path))
+        except OSError as exc: # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
 
 def get_user_attribute():
     attributes = []

@@ -128,9 +128,17 @@ class Gui_Event_Handler:
         lat.set_value(lat_val)
         lon.set_value(lon_val)
 
-        path = builder.get_object('default_path')
+        gps_path = builder.get_object('default_path')
         path_val = config.get_config('gps path')
-        path.set_text(path_val)
+        gps_path.set_text(path_val)
+
+        polling = builder.get_object('gps_poll_value')
+        poll_val = config.get_config('poll frequency')
+        polling.set_value(int(poll_val))
+
+        record_path = builder.get_object('recording_folder')
+        record_path_val = config.get_config('recording path')
+        record_path.set_current_folder(record_path_val)
 
         window.add(settings)
         window.show_all()
@@ -249,6 +257,19 @@ class Gui_Event_Handler:
                 error = True
                 error_obj.set_label('Invalid path to GPS Device')
                 setting_view.add(error_obj)
+
+        polling_val = int(builder.get_object('gps_poll_value').get_value())
+
+        if (polling_val != int(config.get_config('poll frequency'))):
+            print('Updating polling frequency')
+            settings['poll frequency'] = polling_val
+
+        recording_folder = builder.get_object('recording_folder').get_current_folder()
+        
+        if (recording_folder != config.get_config('recording path')):
+            print('Updating default recording path')
+            settings['recording path'] = recording_folder
+
         
         if not error:
             config.set_config(settings)
