@@ -1,7 +1,4 @@
-from PIL.Image import new
 import gi
-from matplotlib import pyplot
-import matplotlib
 gi.require_version('Gtk', '3.0')
 gi.require_version("Gdk", "3.0")
 gi.require_version("OsmGpsMap", "1.0")
@@ -13,14 +10,9 @@ from gi.repository import (Gtk,
     Gtk,
     OsmGpsMap as osmgpsmap,
 )
-from matplotlib.backends.backend_gtk3agg import (
-    FigureCanvasGTK3Agg as FigureCanvas)
-import numpy as np
-import maptiler
 from gps_handler import get_coordinates
 import config
 import os.path
-import random
 
 print(f"using library: {osmgpsmap.__file__} (version {osmgpsmap._version})")
 
@@ -30,16 +22,6 @@ glade_file = "gui.glade"
 builder = Gtk.Builder()
 builder.add_from_file(glade_file)
 recording = False
-offsetx = 0
-offsety = 0
-px = 0
-py = 0
-maxx = 0
-maxy = 0
-
-# higher values make movement more performant
-# lower values make movement smoother
-SENSITIVITY = 1
 
 viewport = builder.get_object("view")
 
@@ -51,6 +33,7 @@ resolution = [int(config.get_config('resolution_width')), int(config.get_config(
 osm = osmgpsmap.Map()
 osm.set_property("map-source", osmgpsmap.MapSource_t.OPENSTREETMAP)
 osm.set_center_and_zoom(map_lat,map_lon,zoom)
+osm.props.tile_cache = config.get_config('cache path')
 
 viewport.add(osm)
 
@@ -117,6 +100,11 @@ class Gui_Event_Handler:
         record_path = builder.get_object('recording_folder')
         record_path_val = config.get_config('recording path')
         record_path.set_current_folder(record_path_val)
+
+        cache_path = builder.get_object('cache_dir_val')
+        cache_path_val = config.get_config('cache path')
+        print(cache_path_val)
+        cache_path.set_current_folder(cache_path_val)
 
         window.add(settings)
         window.show_all()
@@ -205,8 +193,13 @@ class Gui_Event_Handler:
         
         if (recording_folder != config.get_config('recording path')):
             print('Updating default recording path')
-            settings['recording path'] = recording_folder
+            settings['recording path'] = recording_folder + '/'
 
+        cache_path = builder.get_object('cache_dir_val').get_current_folder()
+
+        if (cache_path != config.get_config('cache path')):
+            print('Updating cache path')
+            settings['cache path'] = cache_path + '/'
         
         if not error:
             config.set_config(settings)
