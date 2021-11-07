@@ -12,6 +12,7 @@ config_parser = configparser.ConfigParser()
 config_mode = 'DEFAULT'
 
 record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
+cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 
 default_config = {
         'window mode':'fullscreen',
