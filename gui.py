@@ -1,31 +1,27 @@
-from PIL.Image import new
 import gi
-from matplotlib import pyplot
-import matplotlib
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-from matplotlib.backends.backend_gtk3agg import (
-    FigureCanvasGTK3Agg as FigureCanvas)
-import numpy as np
-import maptiler
+gi.require_version("Gdk", "3.0")
+gi.require_version("OsmGpsMap", "1.0")
+from gi.repository import (Gtk,
+    Gdk,
+    GdkPixbuf,
+    GLib,
+    GObject,
+    Gtk,
+    OsmGpsMap as osmgpsmap,
+)
 from gps_handler import get_coordinates
 import config
 import os.path
+
+print(f"using library: {osmgpsmap.__file__} (version {osmgpsmap._version})")
+
+assert osmgpsmap._version == "1.0"
 
 glade_file = "gui.glade"
 builder = Gtk.Builder()
 builder.add_from_file(glade_file)
 recording = False
-offsetx = 0
-offsety = 0
-px = 0
-py = 0
-maxx = 0
-maxy = 0
-
-# higher values make movement more performant
-# lower values make movement smoother
-SENSITIVITY = 1
 
 viewport = builder.get_object("view")
 
@@ -33,30 +29,16 @@ map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(','))
 physical_lat, physical_lon = get_coordinates()
 zoom = int(float(config.get_config('default zoom')))
 resolution = [int(config.get_config('resolution_width')), int(config.get_config('resolution_height'))]
-figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
 
-viewport.add(figure)
+osm = osmgpsmap.Map()
+osm.set_property("map-source", osmgpsmap.MapSource_t.OPENSTREETMAP)
+osm.set_center_and_zoom(map_lat,map_lon,zoom)
+osm.props.tile_cache = config.get_config('cache path')
+
+viewport.add(osm)
 
 window = builder.get_object("main_window")
 window.show_all()
-
-def Min(a, b):
-    if  b < a:
-        return b
-    return a
-
-def Max(a, b):
-    if b > a:
-        return b
-    return a
-
-def RoundDownToMultiple(i, m):
-    return i/m*m
-
-def RoundToNearestMultiple(i, m):
-    if i % m > m / 2:
-        return (i/m+1)*m
-    return i/m*m
 
 def exit_settings():
     print("Exiting Settings")
@@ -65,19 +47,6 @@ def exit_settings():
 
     settings = builder.get_object('map_view')
     window.add(settings)
-    window.show_all()
-    update_gui()
-
-def get_tiles():
-    figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
-
-    for mapimg in viewport.get_children():
-        matplotlib.pyplot.close('all')
-        viewport.remove(mapimg)
-        
-    viewport.add(figure)
-    
-    viewport.queue_draw()
     window.show_all()
     update_gui()
 
@@ -99,14 +68,6 @@ class Gui_Event_Handler:
 
     def exit(self, *args):
         Gtk.main_quit()
-    
-    def map_resolution(self, *args):
-        global resolution
-        global viewport
-        res_check = [viewport.get_allocation().width, viewport.get_allocation().height]
-        if (res_check !=  resolution):
-            resolution = res_check
-            get_tiles()
 
     def open_settings(self, *args):
         for child in window.get_children():
@@ -140,23 +101,30 @@ class Gui_Event_Handler:
         record_path_val = config.get_config('recording path')
         record_path.set_current_folder(record_path_val)
 
+        cache_path = builder.get_object('cache_dir_val')
+        cache_path_val = config.get_config('cache path')
+        print(cache_path_val)
+        cache_path.set_current_folder(cache_path_val)
+
         window.add(settings)
         window.show_all()
         update_gui()
 
     def zoom_in(self, *args):
+        global osm
         global zoom
         if zoom < 19:
             zoom = zoom +1
+            osm.set_zoom(zoom)
             print("Zoomed to level: " + str(zoom))
-            get_tiles()
 
     def zoom_out(self, *args):
+        global osm
         global zoom
-        if zoom >4:
+        if zoom > 4:
             zoom = zoom -1
+            osm.set_zoom(zoom)
             print("Zoomed to level: " + str(zoom))
-            get_tiles()
 
     def toggle_record(self, *args):
         global recording
@@ -168,49 +136,6 @@ class Gui_Event_Handler:
         else:
             end_record()
             record_button.set_property('image', builder.get_object('record_image'))
-
-    def drag_start(self,w, event):
-        
-        if event.button == 1:
-            p = w.get_parent()
-            # offset == distance of parent widget from edge of screen ...
-            global offsetx, offsety
-            offsetx, offsety =  p.get_window().get_position()
-            # plus distance from pointer to edge of widget
-            offsetx += event.x
-            offsety += event.y
-            # maxx, maxy both relative to the parent
-            # note that we're rounding down now so that these max values don't get
-            # rounded upward later and push the widget off the edge of its parent.
-            global maxx, maxy
-            maxx = RoundDownToMultiple(p.get_allocation().width - w.get_allocation().width, SENSITIVITY)
-            maxy = RoundDownToMultiple(p.get_allocation().height - w.get_allocation().height, SENSITIVITY)
-            print(maxx,maxy)
-
-    def drag_move(self, w, event):
-        # x_root,x_root relative to screen
-        # x,y relative to parent (fixed widget)
-        # px,py stores previous values of x,y
-
-        global px, py
-        global offsetx, offsety
-
-        # get starting values for x,y
-        x = event.x_root - offsetx
-        y = event.y_root - offsety
-        print(x,y)
-        # make sure the potential coordinates x,y:
-        #   1) will not push any part of the widget outside of its parent container
-        #   2) is a multiple of SENSITIVITY
-        x = RoundToNearestMultiple(Max(Min(x, maxx), 0), SENSITIVITY)
-        y = RoundToNearestMultiple(Max(Min(y, maxy), 0), SENSITIVITY)
-        if x != px or y != py:
-            px = x
-            py = y
-            print(px,py)
-
-    def drag_test(self, *args):
-        print(args)
 
     def save_settings(self, *args):
         print("Saving settings")
@@ -268,8 +193,13 @@ class Gui_Event_Handler:
         
         if (recording_folder != config.get_config('recording path')):
             print('Updating default recording path')
-            settings['recording path'] = recording_folder
+            settings['recording path'] = recording_folder + '/'
 
+        cache_path = builder.get_object('cache_dir_val').get_current_folder()
+
+        if (cache_path != config.get_config('cache path')):
+            print('Updating cache path')
+            settings['cache path'] = cache_path + '/'
         
         if not error:
             config.set_config(settings)
@@ -280,23 +210,13 @@ class Gui_Event_Handler:
 
     def move_to_pin(self, *args):
         print('Moving map location')
-        global physical_lat
-        global physical_lon
+        global physical_lat, physical_lon, map_lat, map_lon, zoom
         physical_lat, physical_lon = get_coordinates()
         if (physical_lat is not None and physical_lon is not None):
-            figure = FigureCanvas(maptiler.get_figure(physical_lat, physical_lon, zoom, resolution))
+            map_lat , map_lon = physical_lat, physical_lon
+            osm.set_center_and_zoom(map_lat, map_lon, zoom)
         else:
-            figure = FigureCanvas(maptiler.get_figure(map_lat, map_lon, zoom, resolution))
-
-        for mapimg in viewport.get_children():
-            matplotlib.pyplot.close('all')
-            viewport.remove(mapimg)
-        
-        viewport.add(figure)
-    
-        viewport.queue_draw()
-        window.show_all()
-        update_gui()
+            osm.set_center_and_zoom(map_lat, map_lon, zoom)        
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())

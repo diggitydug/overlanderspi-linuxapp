@@ -4,16 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-numpy = "*"
-matplotlib = "*"
-Pillow = "*"
 pycairo = "*"
 PyGObject = "*"
-imageio = "*"
 gps = "*"
 pynmea2 = "*"
 serial = "*"
+
 
 [dev-packages]
 

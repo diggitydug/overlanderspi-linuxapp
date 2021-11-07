@@ -12,6 +12,7 @@ config_parser = configparser.ConfigParser()
 config_mode = 'DEFAULT'
 
 record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
+cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 
 default_config = {
         'window mode':'fullscreen',
@@ -22,7 +23,8 @@ default_config = {
         'default loc': '33.307161,-111.681168',
         'gps path': '/dev/ttyACM0',
         'poll frequency':'30',
-        'recording path': record_path
+        'recording path': record_path,
+        'cache path': cache_path,
     }
 
 #Called when application detects no config 
@@ -52,6 +54,13 @@ else:
 if not path.exists(os.path.dirname(record_path)):
         try:
             os.makedirs(os.path.dirname(record_path))
+        except OSError as exc: # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+if not path.exists(os.path.dirname(cache_path)):
+        try:
+            os.makedirs(os.path.dirname(cache_path))
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
