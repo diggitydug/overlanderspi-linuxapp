@@ -40,6 +40,7 @@ viewport.add(osm)
 window = builder.get_object("main_window")
 window.show_all()
 
+
 def exit_settings():
     print("Exiting Settings")
     for child in window.get_children():
@@ -50,19 +51,23 @@ def exit_settings():
     window.show_all()
     update_gui()
 
+
 def start_record():
     global recording
     recording = True
     print("Starting track record")
 
+
 def end_record():
     global recording
     recording = False
     print("Ending track record")
-        
+
+
 def update_gui():
     while Gtk.events_pending():
         Gtk.main_iteration_do(True)
+
 
 class Gui_Event_Handler:
 
@@ -75,9 +80,9 @@ class Gui_Event_Handler:
 
         settings = builder.get_object('settings_view')
 
-        toggle = builder.get_object('cache_toggle')
+        cache_toggle = builder.get_object('cache_toggle')
         cache_bool = config.get_config('caching')
-        toggle.set_active(cache_bool)
+        cache_toggle.set_active(cache_bool)
 
         zoom = builder.get_object('zoom_setting')
         zoom_val = config.get_config('default zoom')
@@ -103,8 +108,11 @@ class Gui_Event_Handler:
 
         cache_path = builder.get_object('cache_dir_val')
         cache_path_val = config.get_config('cache path')
-        print(cache_path_val)
         cache_path.set_current_folder(cache_path_val)
+
+        record_dialog = builder.get_object('ask_record_toggle')
+        record_dialog_bool = config.get_config('record dialog')
+        record_dialog.set_active(record_dialog_bool)
 
         window.add(settings)
         window.show_all()
@@ -189,17 +197,23 @@ class Gui_Event_Handler:
             print('Updating polling frequency')
             settings['poll frequency'] = polling_val
 
-        recording_folder = builder.get_object('recording_folder').get_current_folder()
+        recording_folder = builder.get_object('recording_folder').get_current_folder() + '/'
         
         if (recording_folder != config.get_config('recording path')):
             print('Updating default recording path')
             settings['recording path'] = recording_folder + '/'
 
-        cache_path = builder.get_object('cache_dir_val').get_current_folder()
+        cache_path = builder.get_object('cache_dir_val').get_current_folder() + '/'
 
         if (cache_path != config.get_config('cache path')):
             print('Updating cache path')
             settings['cache path'] = cache_path + '/'
+
+        record_dialog = builder.get_object('ask_record_toggle').get_active()
+
+        if (record_dialog != config.get_config('record dialog')):
+            print('Updating record dialog settings')
+            settings['record dialog'] = record_dialog
         
         if not error:
             config.set_config(settings)

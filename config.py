@@ -15,6 +15,7 @@ record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
 cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 
 default_config = {
+        'version': '1',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
@@ -25,6 +26,7 @@ default_config = {
         'poll frequency':'30',
         'recording path': record_path,
         'cache path': cache_path,
+        'record dialog': 'False',
     }
 
 #Called when application detects no config 
@@ -39,15 +41,14 @@ def new_config():
 if (path.exists('config.txt')):
     config_parser.read('config.txt')
     update_default = False
-    for config in config_parser['DEFAULT']:
-        if not (config_parser['DEFAULT'][config] == default_config[config]):
-            update_default = True
-    
-    if update_default:
-        print('Updating defaults to match newest config')
-        config_parser['DEFAULT'] = default_config
+    if (config_parser['DEFAULT']['version'] != default_config['version']):
+        print('Updating default config to latest version')
+        for config in default_config:
+            config_parser['DEFAULT'] = default_config
+        
         with open('config.txt', 'w') as configfile:
             config_parser.write(configfile)
+
 else:
     new_config()
 
@@ -73,7 +74,7 @@ def get_user_attribute():
     return attributes
 
 def get_config(attribute):
-    if (attribute == 'caching'):
+    if (attribute == 'caching' or attribute == 'record dialog'):
         try:
             value = config_parser['USER'].getboolean(attribute)
             return value
