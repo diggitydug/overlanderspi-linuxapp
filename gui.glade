@@ -317,6 +317,48 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkBox" id="lat_entry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel" id="lat_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">The latitude the application opens the maps to</property>
+                            <property name="label" translatable="yes">Default Latitude</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">15</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="default_lat_value">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">default_lat_adjust</property>
+                            <property name="climb_rate">0.25</property>
+                            <property name="digits">6</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">10</property>
+                            <property name="pack_type">end</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="padding">2</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkBox" id="lon_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -359,15 +401,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="lat_entry">
+                      <object class="GtkBox" id="homing_defaults_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkLabel" id="lat_label">
+                          <object class="GtkLabel" id="homing_button_default">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">The latitude the application opens the maps to</property>
-                            <property name="label" translatable="yes">Default Latitude</property>
+                            <property name="tooltip_text" translatable="yes">When no GPS dongle available, pressing the homing pin will bring map to the set default latitude and longitude. Displays an error message otherwise</property>
+                            <property name="label" translatable="yes">Homing pin defaults</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -377,12 +419,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="default_lat_value">
+                          <object class="GtkSwitch" id="homing_default_toggle">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment">default_lat_adjust</property>
-                            <property name="climb_rate">0.25</property>
-                            <property name="digits">6</property>
+                            <property name="active">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

@@ -14,8 +14,10 @@ config_mode = 'DEFAULT'
 record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
 cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 
+#If you change these update the version number
+#If you add a setting with a bool value update get_config()
 default_config = {
-        'version': '1',
+        'version': '2',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
@@ -27,6 +29,7 @@ default_config = {
         'recording path': record_path,
         'cache path': cache_path,
         'record dialog': 'False',
+        'homing default': 'True',
     }
 
 #Called when application detects no config 
@@ -74,7 +77,10 @@ def get_user_attribute():
     return attributes
 
 def get_config(attribute):
-    if (attribute == 'caching' or attribute == 'record dialog'):
+    #This if statements checks for the elements that should be bools 
+    if (attribute == 'caching' or 
+    attribute == 'record dialog' or 
+    attribute == 'homing default'):
         try:
             value = config_parser['USER'].getboolean(attribute)
             return value

@@ -14,8 +14,6 @@ from gps_handler import get_coordinates
 import config
 import os.path
 
-print(f"using library: {osmgpsmap.__file__} (version {osmgpsmap._version})")
-
 assert osmgpsmap._version == "1.0"
 
 glade_file = "gui.glade"
@@ -33,11 +31,16 @@ resolution = [int(config.get_config('resolution_width')), int(config.get_config(
 osm = osmgpsmap.Map()
 osm.set_property("map-source", osmgpsmap.MapSource_t.OPENSTREETMAP)
 osm.set_center_and_zoom(map_lat,map_lon,zoom)
-osm.props.tile_cache = config.get_config('cache path')
+if (config.get_config('caching')):
+    osm.props.tile_cache = config.get_config('cache path')
+else:
+    osm.props.tile_cache = osmgpsmap.MAP_CACHE_DISABLED
+
 
 viewport.add(osm)
 
 window = builder.get_object("main_window")
+window.connect("destroy", Gtk.main_quit)
 window.show_all()
 
 
@@ -67,6 +70,10 @@ def end_record():
 def update_gui():
     while Gtk.events_pending():
         Gtk.main_iteration_do(True)
+
+
+def no_dongle_error():
+    pass
 
 
 class Gui_Event_Handler:
@@ -114,6 +121,10 @@ class Gui_Event_Handler:
         record_dialog_bool = config.get_config('record dialog')
         record_dialog.set_active(record_dialog_bool)
 
+        homing_default = builder.get_object('homing_default_toggle')
+        homing_default_bool = config.get_config('homing default')
+        homing_default.set_active(homing_default_bool)
+
         window.add(settings)
         window.show_all()
         update_gui()
@@ -157,9 +168,13 @@ class Gui_Event_Handler:
         for attribute in user_attributes:
             settings[attribute] = config.get_config(attribute)
         
-        toggle_bool = builder.get_object('cache_toggle').get_state()
-        if(config.get_config('caching') != toggle_bool):
-            settings['caching'] = builder.get_object('cache_toggle').get_state()
+        cache_bool = builder.get_object('cache_toggle').get_state()
+        if(config.get_config('caching') != cache_bool):
+            settings['caching'] = cache_bool
+            if (cache_bool):
+                osm.props.tile_cache = config.get_config('cache path')
+            else:
+                osm.props.tile_cache = osmgpsmap.MAP_CACHE_DISABLED
             print('Caching setting updated')
         
         zoom_val = int(builder.get_object('zoom_setting').get_value())
@@ -214,6 +229,12 @@ class Gui_Event_Handler:
         if (record_dialog != config.get_config('record dialog')):
             print('Updating record dialog settings')
             settings['record dialog'] = record_dialog
+
+        homing_default = builder.get_object('homing_default_toggle').get_active()
+
+        if (homing_default != config.get_config('homing default')):
+            print("Updating homing default setting")
+            settings['homing default'] = homing_default
         
         if not error:
             config.set_config(settings)
@@ -224,13 +245,17 @@ class Gui_Event_Handler:
 
     def move_to_pin(self, *args):
         print('Moving map location')
+        pin_default = config.get_config('homing default')
         global physical_lat, physical_lon, map_lat, map_lon, zoom
         physical_lat, physical_lon = get_coordinates()
         if (physical_lat is not None and physical_lon is not None):
             map_lat , map_lon = physical_lat, physical_lon
             osm.set_center_and_zoom(map_lat, map_lon, zoom)
         else:
-            osm.set_center_and_zoom(map_lat, map_lon, zoom)        
+            if(pin_default):
+                osm.set_center_and_zoom(map_lat, map_lon, zoom)  
+            else:
+                no_dongle_error()
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())
