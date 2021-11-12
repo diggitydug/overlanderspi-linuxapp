@@ -17,7 +17,7 @@ cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 #If you change these update the version number
 #If you add a setting with a bool value update get_config()
 default_config = {
-        'version': '2',
+        'version': '3',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
@@ -30,6 +30,7 @@ default_config = {
         'cache path': cache_path,
         'record dialog': 'False',
         'homing default': 'True',
+        'homing zoom': '15',
     }
 
 #Called when application detects no config 

@@ -13,6 +13,7 @@ from gi.repository import (Gtk,
 from gps_handler import get_coordinates
 import config
 import os.path
+import time
 
 assert osmgpsmap._version == "1.0"
 
@@ -22,6 +23,7 @@ builder.add_from_file(glade_file)
 recording = False
 
 viewport = builder.get_object("view")
+record_dialog = builder.get_object('record_file_dialog')
 
 map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
 physical_lat, physical_lon = get_coordinates()
@@ -64,6 +66,14 @@ def start_record():
 def end_record():
     global recording
     recording = False
+    if (config.get_config('record dialog')):
+        timestr = time.strftime("%Y%m%d-%H%M")
+        default_name = 'GPSTrack-' + timestr
+        entry = builder.get_object('record_file_name')
+        entry.set_text(default_name)
+
+        record_dialog.run()
+        
     print("Ending track record")
 
 
@@ -124,6 +134,10 @@ class Gui_Event_Handler:
         homing_default = builder.get_object('homing_default_toggle')
         homing_default_bool = config.get_config('homing default')
         homing_default.set_active(homing_default_bool)
+
+        homing_zoom = builder.get_object('homing_zoom_setting')
+        homing_zoom_val = config.get_config('homing zoom')
+        homing_zoom.set_value(int(homing_zoom_val))
 
         window.add(settings)
         window.show_all()
@@ -235,6 +249,12 @@ class Gui_Event_Handler:
         if (homing_default != config.get_config('homing default')):
             print("Updating homing default setting")
             settings['homing default'] = homing_default
+
+        homing_zoom = int(builder.get_object('homing_zoom_setting').get_value())
+
+        if (homing_zoom != int(config.get_config('homing zoom'))):
+            print('Updating homing zoom setting')
+            settings['homing zoom'] = homing_zoom
         
         if not error:
             config.set_config(settings)
@@ -246,16 +266,24 @@ class Gui_Event_Handler:
     def move_to_pin(self, *args):
         print('Moving map location')
         pin_default = config.get_config('homing default')
-        global physical_lat, physical_lon, map_lat, map_lon, zoom
+        global physical_lat, physical_lon, map_lat, map_lon
         physical_lat, physical_lon = get_coordinates()
+        pin_zoom = int(config.get_config('homing zoom'))
         if (physical_lat is not None and physical_lon is not None):
             map_lat , map_lon = physical_lat, physical_lon
-            osm.set_center_and_zoom(map_lat, map_lon, zoom)
+            osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)
         else:
             if(pin_default):
-                osm.set_center_and_zoom(map_lat, map_lon, zoom)  
+                osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)  
             else:
                 no_dongle_error()
+
+    def save_recording(self, *args):
+        pass
+
+    def discard_recording(self, *args):
+        record_dialog.hide()
+        print("Discarding recording")
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())
