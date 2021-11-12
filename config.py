@@ -17,20 +17,20 @@ cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 #If you change these update the version number
 #If you add a setting with a bool value update get_config()
 default_config = {
-        'version': '3',
+        'version': '4',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
         'caching':'True',
         'default zoom': '9',
-        'default loc': '33.307161,-111.681168',
+        'default loc': '33.30804,-111.67467',
         'gps path': '/dev/ttyACM0',
         'poll frequency':'30',
         'recording path': record_path,
         'cache path': cache_path,
         'record dialog': 'False',
         'homing default': 'True',
-        'homing zoom': '15',
+        'homing zoom': '16',
     }
 
 #Called when application detects no config 
@@ -85,7 +85,6 @@ def get_user_attribute():
         if(config_parser['USER'][config] != config_parser['DEFAULT'][config]):
             attributes.append(config)
 
-    print (attributes)
     return attributes
 
 def get_config(attribute):

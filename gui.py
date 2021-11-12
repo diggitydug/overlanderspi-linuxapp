@@ -12,7 +12,7 @@ from gi.repository import (Gtk,
 )
 from gps_handler import get_coordinates
 import config
-import os.path
+import os
 import time
 
 assert osmgpsmap._version == "1.0"
@@ -66,14 +66,19 @@ def start_record():
 def end_record():
     global recording
     recording = False
+    timestr = time.strftime("%Y%m%d-%H%M")
+    default_name = 'GPSTrack-' + timestr
     if (config.get_config('record dialog')):
-        timestr = time.strftime("%Y%m%d-%H%M")
-        default_name = 'GPSTrack-' + timestr
         entry = builder.get_object('record_file_name')
         entry.set_text(default_name)
 
         record_dialog.run()
-        
+    else:
+        file_path =  config.get_config('recording path')
+        file = open(str(file_path + default_name), 'w')
+        file.close()
+        print('Saving GPS record: ' + default_name)
+   
     print("Ending track record")
 
 
@@ -266,9 +271,10 @@ class Gui_Event_Handler:
     def move_to_pin(self, *args):
         print('Moving map location')
         pin_default = config.get_config('homing default')
-        global physical_lat, physical_lon, map_lat, map_lon
+        global physical_lat, physical_lon, map_lat, map_lon, zoom
         physical_lat, physical_lon = get_coordinates()
         pin_zoom = int(config.get_config('homing zoom'))
+        zoom = pin_zoom
         if (physical_lat is not None and physical_lon is not None):
             map_lat , map_lon = physical_lat, physical_lon
             osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)
@@ -279,7 +285,12 @@ class Gui_Event_Handler:
                 no_dongle_error()
 
     def save_recording(self, *args):
-        pass
+        file_name = builder.get_object('record_file_name').get_text()
+        file_path =  config.get_config('recording path')
+        file = open(file_path + file_name, 'w')
+        record_dialog.hide()
+        file.close()
+        print("Saving GPS recording: " + file_name)
 
     def discard_recording(self, *args):
         record_dialog.hide()
