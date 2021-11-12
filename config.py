@@ -44,11 +44,19 @@ def new_config():
 if (path.exists('config.txt')):
     config_parser.read('config.txt')
     update_default = False
-    if (config_parser['DEFAULT']['version'] != default_config['version']):
-        print('Updating default config to latest version')
-        for config in default_config:
-            config_parser['DEFAULT'] = default_config
-        
+    try:
+        if (config_parser['DEFAULT']['version'] != default_config['version']):
+            print('Updating default config to latest version')
+            for config in default_config:
+                config_parser['DEFAULT'] = default_config
+
+            with open('config.txt', 'w') as configfile:
+                config_parser.write(configfile)
+
+    except KeyError:
+        print("Updating config file to new format")
+        os.remove('config.txt')
+        config_parser['DEFAULT'] = default_config
         with open('config.txt', 'w') as configfile:
             config_parser.write(configfile)
 
@@ -73,7 +81,10 @@ if not path.exists(os.path.dirname(cache_path)):
 def get_user_attribute():
     attributes = []
     for config in config_parser['USER']:
-        attributes.append(config)
+        if(config_parser['USER'][config] != config_parser['DEFAULT'][config]):
+            attributes.append(config)
+
+    print (attributes)
     return attributes
 
 def get_config(attribute):
