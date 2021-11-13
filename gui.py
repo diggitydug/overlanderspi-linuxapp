@@ -38,6 +38,8 @@ if (config.get_config('caching')):
 else:
     osm.props.tile_cache = osmgpsmap.MAP_CACHE_DISABLED
 
+pin_image = GdkPixbuf.Pixbuf.new_from_file_at_size("icons/gps.png", 24, 24)
+map_pin = None
 
 viewport.add(osm)
 
@@ -271,16 +273,21 @@ class Gui_Event_Handler:
     def move_to_pin(self, *args):
         print('Moving map location')
         pin_default = config.get_config('homing default')
-        global physical_lat, physical_lon, map_lat, map_lon, zoom
+        global physical_lat, physical_lon, map_lat, map_lon, zoom, map_pin
         physical_lat, physical_lon = get_coordinates()
         pin_zoom = int(config.get_config('homing zoom'))
         zoom = pin_zoom
+        if(map_pin is not None):
+            osm.image_remove(map_pin)
         if (physical_lat is not None and physical_lon is not None):
             map_lat , map_lon = physical_lat, physical_lon
             osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)
+
+            map_pin = osm.image_add(map_lat, map_lon, pin_image)
         else:
             if(pin_default):
                 osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)  
+                map_pin = osm.image_add(map_lat, map_lon, pin_image)
             else:
                 no_dongle_error()
 
