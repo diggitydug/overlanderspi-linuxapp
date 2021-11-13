@@ -40,6 +40,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="valign">end</property>
+    <property name="margin_bottom">5</property>
     <property name="label" translatable="yes">Settings error</property>
     <attributes>
       <attribute name="weight" value="bold"/>
@@ -554,9 +555,16 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="default_path">
+                          <object class="GtkComboBoxText" id="gps_dongle_path">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can_focus">False</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -570,6 +578,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
+                        <property name="padding">2</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -757,7 +766,7 @@
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="padding">5</property>
-        <property name="position">2</property>
+        <property name="position">10</property>
       </packing>
     </child>
   </object>

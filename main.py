@@ -11,7 +11,7 @@ from gi.repository import (Gtk,
     Gtk,
     OsmGpsMap as osmgpsmap,
 )
-from gps_handler import get_coordinates
+import gps_handler
 import config
 import os
 import time
@@ -27,7 +27,7 @@ viewport = builder.get_object("view")
 record_dialog = builder.get_object('record_file_dialog')
 
 map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
-physical_lat, physical_lon = get_coordinates()
+physical_lat, physical_lon = gps_handler.get_coordinates()
 zoom = int(float(config.get_config('default zoom')))
 resolution = [int(config.get_config('resolution_width')), int(config.get_config('resolution_height'))]
 
@@ -119,9 +119,12 @@ class Gui_Event_Handler:
         lat.set_value(lat_val)
         lon.set_value(lon_val)
 
-        gps_path = builder.get_object('default_path')
-        path_val = config.get_config('gps path')
-        gps_path.set_text(path_val)
+        gps_dongle_path = builder.get_object('gps_dongle_path')
+        path_val = config.get_config('gps dongle path')
+        gps_dongle_path.append_text(path_val)
+        for devices in gps_handler.get_devices():
+            gps_dongle_path.append_text(devices)
+        gps_dongle_path.set_active(0)
 
         polling = builder.get_object('gps_poll_value')
         poll_val = config.get_config('poll frequency')
@@ -217,9 +220,9 @@ class Gui_Event_Handler:
             print('Updating default lon')
             settings['default loc'] = str(new_lat)+','+str(new_lon)
 
-        device_path = builder.get_object('default_path').get_text()
+        device_path = builder.get_object('gps_dongle_path').get_active_text()
 
-        if (device_path != config.get_config('gps path')):
+        if (device_path != config.get_config('gps dongle path')):
             if os.path.exists(device_path):
                 print('Updating default path to GPS Device')
                 settings['gps path'] = device_path
@@ -275,7 +278,7 @@ class Gui_Event_Handler:
         print('Moving map location')
         pin_default = config.get_config('homing default')
         global physical_lat, physical_lon, map_lat, map_lon, zoom, map_pin
-        physical_lat, physical_lon = get_coordinates()
+        physical_lat, physical_lon = gps_handler.get_coordinates()
         pin_zoom = int(config.get_config('homing zoom'))
         zoom = pin_zoom
         if(map_pin is not None):
