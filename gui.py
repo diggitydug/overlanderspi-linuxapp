@@ -1,3 +1,4 @@
+import configparser
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version("Gdk", "3.0")
@@ -302,6 +303,10 @@ class Gui_Event_Handler:
     def discard_recording(self, *args):
         record_dialog.hide()
         print("Discarding recording")
+
+    def restore_defaults(self, *args):
+        config.restore_defaults()
+        exit_settings()
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())

@@ -116,3 +116,14 @@ def set_config(values):
             config_parser.write(configfile)
     except:
         print('Could not update settings')
+
+def restore_defaults():
+    for setting in config_parser['USER']:
+        config_parser.remove_option('USER',setting)
+    try:
+        with open('config.txt', 'w') as configfile:
+            config_parser.write(configfile)
+
+        print('Settings returned to defaults')
+    except:
+        print('Could not restore defaults')
