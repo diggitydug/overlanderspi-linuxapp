@@ -2,7 +2,7 @@
 Repository for the linux app of the Overlanders Pi Project
 
 # Configuring the Dev Environment
-Note: Development has been set up in Ubuntu 20.04 with Python 3.8
+Note: Development has been set up in Ubuntu 20.04 with Python 3
 Linux environment recommended for development due to requirements
 
 To install dev dependencies run the command 

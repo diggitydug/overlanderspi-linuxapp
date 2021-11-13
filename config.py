@@ -14,17 +14,23 @@ config_mode = 'DEFAULT'
 record_path = path.expanduser('~') + '/Overlanders Pi/Path Recordings/'
 cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 
+#If you change these update the version number
+#If you add a setting with a bool value update get_config()
 default_config = {
+        'version': '5',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
         'caching':'True',
         'default zoom': '9',
-        'default loc': '33.307161,-111.681168',
+        'default loc': '33.30806,-111.67466',
         'gps path': '/dev/ttyACM0',
         'poll frequency':'30',
         'recording path': record_path,
         'cache path': cache_path,
+        'record dialog': 'False',
+        'homing default': 'True',
+        'homing zoom': '16',
     }
 
 #Called when application detects no config 
@@ -39,15 +45,22 @@ def new_config():
 if (path.exists('config.txt')):
     config_parser.read('config.txt')
     update_default = False
-    for config in config_parser['DEFAULT']:
-        if not (config_parser['DEFAULT'][config] == default_config[config]):
-            update_default = True
-    
-    if update_default:
-        print('Updating defaults to match newest config')
+    try:
+        if (config_parser['DEFAULT']['version'] != default_config['version']):
+            print('Updating default config to latest version')
+            for config in default_config:
+                config_parser['DEFAULT'] = default_config
+
+            with open('config.txt', 'w') as configfile:
+                config_parser.write(configfile)
+
+    except KeyError:
+        print("Updating config file to new format")
+        os.remove('config.txt')
         config_parser['DEFAULT'] = default_config
         with open('config.txt', 'w') as configfile:
             config_parser.write(configfile)
+
 else:
     new_config()
 
@@ -69,11 +82,16 @@ if not path.exists(os.path.dirname(cache_path)):
 def get_user_attribute():
     attributes = []
     for config in config_parser['USER']:
-        attributes.append(config)
+        if(config_parser['USER'][config] != config_parser['DEFAULT'][config]):
+            attributes.append(config)
+
     return attributes
 
 def get_config(attribute):
-    if (attribute == 'caching'):
+    #This if statements checks for the elements that should be bools 
+    if (attribute == 'caching' or 
+    attribute == 'record dialog' or 
+    attribute == 'homing default'):
         try:
             value = config_parser['USER'].getboolean(attribute)
             return value
@@ -98,3 +116,14 @@ def set_config(values):
             config_parser.write(configfile)
     except:
         print('Could not update settings')
+
+def restore_defaults():
+    for setting in config_parser['USER']:
+        config_parser.remove_option('USER',setting)
+    try:
+        with open('config.txt', 'w') as configfile:
+            config_parser.write(configfile)
+
+        print('Settings returned to defaults')
+    except:
+        print('Could not restore defaults')
