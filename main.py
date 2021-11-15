@@ -17,7 +17,7 @@ import time
 
 assert osmgpsmap._version == "1.0"
 
-glade_file = "gui.glade"
+glade_file = "overlanderspi.glade"
 builder = Gtk.Builder()
 builder.add_from_file(glade_file)
 recording = False
