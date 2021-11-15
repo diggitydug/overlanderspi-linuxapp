@@ -289,6 +289,7 @@ class Gui_Event_Handler:
             map_pin = osm.image_add(map_lat, map_lon, pin_image)
         else:
             if(pin_default):
+                map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
                 osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)  
                 map_pin = osm.image_add(map_lat, map_lon, pin_image)
             else:
