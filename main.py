@@ -311,6 +311,9 @@ class Gui_Event_Handler:
         config.restore_defaults()
         exit_settings()
 
+    def download_dialog(self, *args):
+        print("Downloading map area for offline use")
+
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())
     Gtk.main()
