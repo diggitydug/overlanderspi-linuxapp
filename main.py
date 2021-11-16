@@ -24,6 +24,7 @@ recording = False
 
 viewport = builder.get_object("view")
 record_dialog = builder.get_object('record_file_dialog')
+download_dialog = builder.get_object('download_maps_dialog')
 
 map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
 physical_lat, physical_lon = gps_handler.get_coordinates()
@@ -92,6 +93,11 @@ def update_gui():
 def no_dongle_error():
     pass
 
+def print_tiles():
+        if osm.props.tiles_queued != 0:
+            print(osm.props.tiles_queued, "tiles queued")
+        return True
+
 
 class Gui_Event_Handler:
 
@@ -156,7 +162,7 @@ class Gui_Event_Handler:
     def zoom_in(self, *args):
         global osm
         global zoom
-        if zoom < 19:
+        if zoom < 18:
             zoom = zoom +1
             osm.set_zoom(zoom)
             print("Zoomed to level: " + str(zoom))
@@ -312,7 +318,36 @@ class Gui_Event_Handler:
         exit_settings()
 
     def download_dialog(self, *args):
-        print("Downloading map area for offline use")
+        print("Opening map download dialog")
+        download_dialog.run()  
+
+    def current_zoom_download_toggled(self, switch, status):
+        print("Current Zoom toggle flipped")
+        lowest = builder.get_object('lowest_detail_entry')
+        lowest.set_property('editable', not status)
+        update_gui()
+
+        if status:
+            builder.get_object('lowest_detail_entry').set_value(zoom)
+
+    def cancel_map_download(self, *args):
+        print("Cancelling map download")
+        builder.get_object('zoom_detail_error').set_text("")
+        download_dialog.hide()
+
+    def download_maps(self, *args):
+        lowest = int(builder.get_object('lowest_detail_entry').get_value())
+        highest = int(builder.get_object('highest_detail_entry').get_value())
+        if(lowest <= highest):
+            bbox = osm.get_bbox()
+            osm.download_maps(*bbox, lowest, highest)
+            print("Downloading Maps")
+            builder.get_object('zoom_detail_error').set_text("")
+            download_dialog.hide()
+        else:
+            builder.get_object('zoom_detail_error').set_text("Highest detail must be a higher value than Lowest value")
+        
+
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())
