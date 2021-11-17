@@ -7,3 +7,6 @@ import pynmea2
 
 def get_coordinates():
     return None, None
+
+def get_devices():
+    return ['/test/path']

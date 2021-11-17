@@ -20,11 +20,232 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="highest_detail_adjust">
+    <property name="lower">5</property>
+    <property name="upper">18</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="homing_zoom_adjustment">
     <property name="lower">5</property>
     <property name="upper">19</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="lowest_detail_adjust">
+    <property name="lower">4</property>
+    <property name="upper">17</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkDialog" id="download_maps_dialog">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Select zoom range to download</property>
+    <property name="type_hint">dialog</property>
+    <property name="deletable">False</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="cancel_download">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="margin_bottom">5</property>
+                <signal name="clicked" handler="cancel_map_download" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="download_maps_confirm">
+                <property name="label" translatable="yes">Download</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="margin_right">5</property>
+                <property name="margin_bottom">5</property>
+                <signal name="clicked" handler="download_maps" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="lowest_detail_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Lowest Detail Zoom Level</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="lowest_detail_entry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="input_purpose">number</property>
+                <property name="adjustment">lowest_detail_adjust</property>
+                <property name="numeric">True</property>
+                <property name="value">4</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+                <child>
+                  <object class="GtkLabel" id="current_zoom_option_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Use current zoom level as lowest</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSwitch" id="current_zoom_toggle">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <signal name="state-set" handler="current_zoom_download_toggled" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">5</property>
+                    <property name="pack_type">end</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="highest_detail_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="label" translatable="yes">Highest Detail Zoom Level</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="highest_detail_entry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="input_purpose">number</property>
+                <property name="adjustment">highest_detail_adjust</property>
+                <property name="numeric">True</property>
+                <property name="value">18</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="download_size_warning">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="label" translatable="yes">Note: A larger range will download significantly more tiles</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="zoom_detail_error">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <attributes>
+                  <attribute name="foreground" value="#efef29292929"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="pack_type">end</property>
+                <property name="position">10</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkImage" id="map_download_img">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">icons/download.png</property>
   </object>
   <object class="GtkImage" id="pin_image">
     <property name="visible">True</property>
@@ -40,6 +261,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="valign">end</property>
+    <property name="margin_bottom">5</property>
     <property name="label" translatable="yes">Settings error</property>
     <attributes>
       <attribute name="weight" value="bold"/>
@@ -63,7 +285,7 @@
   </object>
   <object class="GtkAdjustment" id="zoom_adjustment">
     <property name="lower">5</property>
-    <property name="upper">19</property>
+    <property name="upper">18</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -284,7 +506,7 @@
                           <object class="GtkLabel" id="zoom_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Sets the default zoom level, must be between 3 and 19</property>
+                            <property name="tooltip_text" translatable="yes">Sets the default zoom level, must be between 3 and 18</property>
                             <property name="label" translatable="yes">Default zoom</property>
                           </object>
                           <packing>
@@ -344,9 +566,11 @@
                           <object class="GtkSpinButton" id="default_lat_value">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="input_purpose">number</property>
                             <property name="adjustment">default_lat_adjust</property>
                             <property name="climb_rate">0.25</property>
                             <property name="digits">6</property>
+                            <property name="numeric">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -386,9 +610,11 @@
                           <object class="GtkSpinButton" id="default_lon_value">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="input_purpose">number</property>
                             <property name="adjustment">default_lon_adjust</property>
                             <property name="climb_rate">0.25</property>
                             <property name="digits">6</property>
+                            <property name="numeric">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -554,9 +780,16 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="default_path">
+                          <object class="GtkComboBoxText" id="gps_dongle_path">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can_focus">False</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -570,6 +803,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
+                        <property name="padding">2</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -675,6 +909,7 @@
                           <object class="GtkSpinButton" id="gps_poll_value">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="input_purpose">number</property>
                             <property name="adjustment">gps_freq_adjust</property>
                             <property name="climb_rate">1</property>
                             <property name="numeric">True</property>
@@ -757,7 +992,7 @@
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="padding">5</property>
-        <property name="position">2</property>
+        <property name="position">10</property>
       </packing>
     </child>
   </object>
@@ -850,6 +1085,21 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="map_download">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">map_download_img</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="download_dialog" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="settings_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -860,7 +1110,7 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">10</property>
               </packing>
             </child>
           </object>
@@ -902,6 +1152,7 @@
   </object>
   <object class="GtkDialog" id="record_file_dialog">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Save Recording</property>
     <property name="type_hint">dialog</property>
     <property name="deletable">False</property>
     <property name="attached_to">main_window</property>

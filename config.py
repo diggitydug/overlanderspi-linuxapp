@@ -17,14 +17,14 @@ cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 #If you change these update the version number
 #If you add a setting with a bool value update get_config()
 default_config = {
-        'version': '5',
+        'version': '1.2',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
         'caching':'True',
         'default zoom': '9',
         'default loc': '33.30806,-111.67466',
-        'gps path': '/dev/ttyACM0',
+        'gps dongle path': '/dev/ttyACM0',
         'poll frequency':'30',
         'recording path': record_path,
         'cache path': cache_path,

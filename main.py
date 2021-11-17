@@ -1,4 +1,3 @@
-import configparser
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version("Gdk", "3.0")
@@ -11,23 +10,24 @@ from gi.repository import (Gtk,
     Gtk,
     OsmGpsMap as osmgpsmap,
 )
-from gps_handler import get_coordinates
+import gps_handler
 import config
 import os
 import time
 
 assert osmgpsmap._version == "1.0"
 
-glade_file = "gui.glade"
+glade_file = "overlanderspi.glade"
 builder = Gtk.Builder()
 builder.add_from_file(glade_file)
 recording = False
 
 viewport = builder.get_object("view")
 record_dialog = builder.get_object('record_file_dialog')
+download_dialog = builder.get_object('download_maps_dialog')
 
 map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
-physical_lat, physical_lon = get_coordinates()
+physical_lat, physical_lon = gps_handler.get_coordinates()
 zoom = int(float(config.get_config('default zoom')))
 resolution = [int(config.get_config('resolution_width')), int(config.get_config('resolution_height'))]
 
@@ -93,6 +93,11 @@ def update_gui():
 def no_dongle_error():
     pass
 
+def print_tiles():
+        if osm.props.tiles_queued != 0:
+            print(osm.props.tiles_queued, "tiles queued")
+        return True
+
 
 class Gui_Event_Handler:
 
@@ -119,9 +124,12 @@ class Gui_Event_Handler:
         lat.set_value(lat_val)
         lon.set_value(lon_val)
 
-        gps_path = builder.get_object('default_path')
-        path_val = config.get_config('gps path')
-        gps_path.set_text(path_val)
+        gps_dongle_path = builder.get_object('gps_dongle_path')
+        path_val = config.get_config('gps dongle path')
+        gps_dongle_path.append_text(path_val)
+        for devices in gps_handler.get_devices():
+            gps_dongle_path.append_text(devices)
+        gps_dongle_path.set_active(0)
 
         polling = builder.get_object('gps_poll_value')
         poll_val = config.get_config('poll frequency')
@@ -154,7 +162,7 @@ class Gui_Event_Handler:
     def zoom_in(self, *args):
         global osm
         global zoom
-        if zoom < 19:
+        if zoom < 18:
             zoom = zoom +1
             osm.set_zoom(zoom)
             print("Zoomed to level: " + str(zoom))
@@ -217,9 +225,9 @@ class Gui_Event_Handler:
             print('Updating default lon')
             settings['default loc'] = str(new_lat)+','+str(new_lon)
 
-        device_path = builder.get_object('default_path').get_text()
+        device_path = builder.get_object('gps_dongle_path').get_active_text()
 
-        if (device_path != config.get_config('gps path')):
+        if (device_path != config.get_config('gps dongle path')):
             if os.path.exists(device_path):
                 print('Updating default path to GPS Device')
                 settings['gps path'] = device_path
@@ -275,7 +283,7 @@ class Gui_Event_Handler:
         print('Moving map location')
         pin_default = config.get_config('homing default')
         global physical_lat, physical_lon, map_lat, map_lon, zoom, map_pin
-        physical_lat, physical_lon = get_coordinates()
+        physical_lat, physical_lon = gps_handler.get_coordinates()
         pin_zoom = int(config.get_config('homing zoom'))
         zoom = pin_zoom
         if(map_pin is not None):
@@ -287,6 +295,7 @@ class Gui_Event_Handler:
             map_pin = osm.image_add(map_lat, map_lon, pin_image)
         else:
             if(pin_default):
+                map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
                 osm.set_center_and_zoom(map_lat, map_lon, pin_zoom)  
                 map_pin = osm.image_add(map_lat, map_lon, pin_image)
             else:
@@ -307,6 +316,38 @@ class Gui_Event_Handler:
     def restore_defaults(self, *args):
         config.restore_defaults()
         exit_settings()
+
+    def download_dialog(self, *args):
+        print("Opening map download dialog")
+        download_dialog.run()  
+
+    def current_zoom_download_toggled(self, switch, status):
+        print("Current Zoom toggle flipped")
+        lowest = builder.get_object('lowest_detail_entry')
+        lowest.set_property('editable', not status)
+        update_gui()
+
+        if status:
+            builder.get_object('lowest_detail_entry').set_value(zoom)
+
+    def cancel_map_download(self, *args):
+        print("Cancelling map download")
+        builder.get_object('zoom_detail_error').set_text("")
+        download_dialog.hide()
+
+    def download_maps(self, *args):
+        lowest = int(builder.get_object('lowest_detail_entry').get_value())
+        highest = int(builder.get_object('highest_detail_entry').get_value())
+        if(lowest <= highest):
+            bbox = osm.get_bbox()
+            osm.download_maps(*bbox, lowest, highest)
+            print("Downloading Maps")
+            builder.get_object('zoom_detail_error').set_text("")
+            download_dialog.hide()
+        else:
+            builder.get_object('zoom_detail_error').set_text("Highest detail must be a higher value than Lowest value")
+        
+
 
 def start_gui():
     builder.connect_signals(Gui_Event_Handler())
