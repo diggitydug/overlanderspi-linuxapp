@@ -84,7 +84,6 @@ def end_record():
    
     print("Ending track record")
 
-
 def update_gui():
     while Gtk.events_pending():
         Gtk.main_iteration_do(True)
@@ -340,10 +339,11 @@ class Gui_Event_Handler:
         highest = int(builder.get_object('highest_detail_entry').get_value())
         if(lowest <= highest):
             bbox = osm.get_bbox()
-            osm.download_maps(*bbox, lowest, highest)
-            print("Downloading Maps")
-            builder.get_object('zoom_detail_error').set_text("")
             download_dialog.hide()
+            builder.get_object('zoom_detail_error').set_text("")
+            print("Downloading map tiles")
+            osm.download_maps(*bbox, lowest, highest)
+            
         else:
             builder.get_object('zoom_detail_error').set_text("Highest detail must be a higher value than Lowest value")
         
