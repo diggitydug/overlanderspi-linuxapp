@@ -25,11 +25,16 @@ recording = False
 viewport = builder.get_object("view")
 record_dialog = builder.get_object('record_file_dialog')
 download_dialog = builder.get_object('download_maps_dialog')
+record_button = builder.get_object('record_button')
+homing_button = builder.get_object('pin_button')
 
+#Load configs from config.py
 map_lat, map_lon = tuple(map(float, config.get_config('default loc').split(',')))
 physical_lat, physical_lon = gps_handler.get_coordinates()
 zoom = int(float(config.get_config('default zoom')))
 resolution = [int(config.get_config('resolution_width')), int(config.get_config('resolution_height'))]
+gps_functions = config.get_config('show gps')
+homing_default = config.get_config('homing default')
 
 osm = osmgpsmap.Map()
 osm.set_property("map-source", osmgpsmap.MapSource_t.OPENSTREETMAP)
@@ -154,6 +159,10 @@ class Gui_Event_Handler:
         homing_zoom_val = config.get_config('homing zoom')
         homing_zoom.set_value(int(homing_zoom_val))
 
+        show_gps = builder.get_object('show_gps_toggle')
+        show_gps_val = config.get_config('show gps')
+        show_gps.set_active(show_gps_val)
+
         window.add(settings)
         window.show_all()
         update_gui()
@@ -270,6 +279,12 @@ class Gui_Event_Handler:
         if (homing_zoom != int(config.get_config('homing zoom'))):
             print('Updating homing zoom setting')
             settings['homing zoom'] = homing_zoom
+
+        show_gps = builder.get_object('show_gps_toggle').get_active()
+
+        if (show_gps != config.get_config('show gps')):
+            print("Updating show gps setting")
+            settings['show gps'] = show_gps
         
         if not error:
             config.set_config(settings)

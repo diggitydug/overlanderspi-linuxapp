@@ -17,7 +17,7 @@ cache_path = path.expanduser('~') + '/Overlanders Pi/Maps/'
 #If you change these update the version number
 #If you add a setting with a bool value update get_config()
 default_config = {
-        'version': '1.2',
+        'version': '1.3',
         'window mode':'fullscreen',
         'resolution_width': '800',
         'resolution_height': '480',
@@ -31,6 +31,7 @@ default_config = {
         'record dialog': 'False',
         'homing default': 'True',
         'homing zoom': '16',
+        'show gps': 'True',
     }
 
 #Called when application detects no config 
@@ -91,7 +92,8 @@ def get_config(attribute):
     #This if statements checks for the elements that should be bools 
     if (attribute == 'caching' or 
     attribute == 'record dialog' or 
-    attribute == 'homing default'):
+    attribute == 'homing default' or
+    attribute == 'show gps'):
         try:
             value = config_parser['USER'].getboolean(attribute)
             return value
