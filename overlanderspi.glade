@@ -763,14 +763,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="gps_path_entry">
+                      <object class="GtkBox" id="show_gps_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkLabel" id="path_label">
+                          <object class="GtkLabel" id="show_gps_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">GPS Dongle</property>
+                            <property name="tooltip_text" translatable="yes">Determines if a window will open asking for the file name for the track</property>
+                            <property name="label" translatable="yes">Show GPS Related Features</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -780,16 +781,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBoxText" id="gps_dongle_path">
+                          <object class="GtkSwitch" id="show_gps_toggle">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="active">0</property>
-                            <property name="has_entry">True</property>
-                            <child internal-child="entry">
-                              <object class="GtkEntry">
-                                <property name="can_focus">False</property>
-                              </object>
-                            </child>
+                            <property name="can_focus">True</property>
+                            <property name="active">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -928,6 +923,51 @@
                         <property name="fill">True</property>
                         <property name="padding">2</property>
                         <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="gps_path_entry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel" id="path_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">GPS Dongle</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">15</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBoxText" id="gps_dongle_path">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can_focus">False</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">10</property>
+                            <property name="pack_type">end</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="padding">2</property>
+                        <property name="position">5</property>
                       </packing>
                     </child>
                   </object>
