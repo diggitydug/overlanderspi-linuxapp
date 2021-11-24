@@ -14,7 +14,7 @@ parts:
   overlanders-pi:
     plugin: python
     python-version: python3
-    source: ../main.py
+    source: ..
     stage-packages:
       - libgirepository1.0-dev
       - python3-gi

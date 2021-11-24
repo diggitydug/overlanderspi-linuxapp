@@ -51,17 +51,15 @@ viewport.add(osm)
 
 window = builder.get_object("main_window")
 window.connect("destroy", Gtk.main_quit)
-window.show_all()
 
 
 def exit_settings():
     print("Exiting Settings")
     for child in window.get_children():
         window.remove(child)
+    map_view = builder.get_object('map_view')
 
-    settings = builder.get_object('map_view')
-    window.add(settings)
-    window.show_all()
+    window.add(map_view)
     update_gui()
 
 
@@ -79,7 +77,6 @@ def end_record():
     if (config.get_config('record dialog')):
         entry = builder.get_object('record_file_name')
         entry.set_text(default_name)
-
         record_dialog.run()
     else:
         file_path =  config.get_config('recording path')
@@ -90,6 +87,17 @@ def end_record():
     print("Ending track record")
 
 def update_gui():
+    global record_button, homing_button
+    if (not gps_functions and not homing_default):
+        window.show_all()
+        record_button.hide()
+        homing_button.hide()
+    elif (not gps_functions and homing_default):
+        window.show_all()
+        record_button.hide()
+    else:
+        window.show_all()
+    
     while Gtk.events_pending():
         Gtk.main_iteration_do(True)
 
@@ -268,11 +276,13 @@ class Gui_Event_Handler:
             print('Updating record dialog settings')
             settings['record dialog'] = record_dialog
 
-        homing_default = builder.get_object('homing_default_toggle').get_active()
+        homing_default_val = builder.get_object('homing_default_toggle').get_active()
+        global homing_default
 
-        if (homing_default != config.get_config('homing default')):
+        if (homing_default_val != config.get_config('homing default')):
             print("Updating homing default setting")
-            settings['homing default'] = homing_default
+            homing_default = homing_default_val
+            settings['homing default'] = homing_default_val
 
         homing_zoom = int(builder.get_object('homing_zoom_setting').get_value())
 
@@ -281,8 +291,10 @@ class Gui_Event_Handler:
             settings['homing zoom'] = homing_zoom
 
         show_gps = builder.get_object('show_gps_toggle').get_active()
+        global gps_functions
 
         if (show_gps != config.get_config('show gps')):
+            gps_functions = show_gps
             print("Updating show gps setting")
             settings['show gps'] = show_gps
         
@@ -365,6 +377,7 @@ class Gui_Event_Handler:
 
 
 def start_gui():
+    update_gui()
     builder.connect_signals(Gui_Event_Handler())
     Gtk.main()
 
