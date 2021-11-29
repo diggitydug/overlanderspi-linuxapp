@@ -6,7 +6,6 @@ from gi.repository import (Gtk,
     Gdk,
     GdkPixbuf,
     GLib,
-    GObject,
     Gtk,
     OsmGpsMap as osmgpsmap,
 )
@@ -21,6 +20,9 @@ glade_file = "overlanderspi.glade"
 builder = Gtk.Builder()
 builder.add_from_file(glade_file)
 recording = False
+recording_file_path = None #This will hold the value of the entire path including file name
+recording_file_name = None #This is just to hold the file name excluding the path
+recording_file = None #This is to store the actual file being recorded to
 
 viewport = builder.get_object("view")
 record_dialog = builder.get_object('record_file_dialog')
@@ -63,28 +65,54 @@ def exit_settings():
     update_gui()
 
 
+def record_to_file():
+    global recording, recording_file
+    if not recording:
+        return recording
+    lat, lon = gps_handler.get_coordinates()
+    lat = "%.5f" % lat
+    lon = "%.5f" % lon
+    recording_file.write(str(lat) + ', ' + str(lon) + '\n')
+    return True    
+
+
+def start_record_loop():
+    refresh_setting = int(config.get_config('poll frequency'))
+    refresh_rate = int(60/refresh_setting) * 1000
+    record_to_file()
+    GLib.timeout_add(refresh_rate, record_to_file)
+
 def start_record():
-    global recording
+    global recording, recording_file, recording_file_path, recording_file_name
     recording = True
     print("Starting track record")
+    timestr = time.strftime("%Y%m%d-%H%M")
+    file_timestr = time.strftime("%Y-%m-%d %H:%M")
+    recording_file_name = 'GPSTrack-' + timestr
+    file_path = config.get_config('recording path')
+    recording_file_path = file_path + recording_file_name
+    recording_file = open(str(recording_file_path), 'a')
+    file_open = "Overlander\'s Pi GPS Log\nStarted at " + file_timestr + "\n\n"
+    recording_file.write(file_open)
+    start_record_loop()
 
 
 def end_record():
-    global recording
+    global recording, recording_file_name, recording_file_path
     recording = False
-    timestr = time.strftime("%Y%m%d-%H%M")
-    default_name = 'GPSTrack-' + timestr
+    record_to_file()
+    print("Ending track record")
+   
     if (config.get_config('record dialog')):
         entry = builder.get_object('record_file_name')
-        entry.set_text(default_name)
+        entry.set_text(recording_file_name)
+        recording_file.close()
+
         record_dialog.run()
-    else:
-        file_path =  config.get_config('recording path')
-        file = open(str(file_path + default_name), 'w')
-        file.close()
-        print('Saving GPS record: ' + default_name)
+    else: 
+        recording_file.close()
+        print('Saving GPS record: ' + recording_file_path)
    
-    print("Ending track record")
 
 def update_gui():
     global record_button, homing_button
@@ -328,12 +356,12 @@ class Gui_Event_Handler:
                 no_dongle_error()
 
     def save_recording(self, *args):
+        global recording_file_path
         file_name = builder.get_object('record_file_name').get_text()
         file_path =  config.get_config('recording path')
-        file = open(file_path + file_name, 'w')
+        os.rename(recording_file_path, file_path + file_name)
         record_dialog.hide()
-        file.close()
-        print("Saving GPS recording: " + file_name)
+        print("Saving GPS recording: " + file_path + file_name)
 
     def discard_recording(self, *args):
         record_dialog.hide()
