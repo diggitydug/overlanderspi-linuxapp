@@ -70,11 +70,14 @@ def record_to_file():
     if not recording:
         return recording
     lat, lon = gps_handler.get_coordinates()
-    lat = "%.5f" % lat
-    lon = "%.5f" % lon
-    recording_file.write(str(lat) + ', ' + str(lon) + '\n')
-    return True    
-
+    if (lat is not None and lon is not None):
+        lat = "%.5f" % lat
+        lon = "%.5f" % lon
+        recording_file.write(str(lat) + ', ' + str(lon) + '\n')
+        return True    
+    else:
+        return False
+      
 
 def start_record_loop():
     refresh_setting = int(config.get_config('poll frequency'))
@@ -92,7 +95,10 @@ def start_record():
     file_path = config.get_config('recording path')
     recording_file_path = file_path + recording_file_name
     recording_file = open(str(recording_file_path), 'a')
-    file_open = "Overlander\'s Pi GPS Log\nStarted at " + file_timestr + "\n\n"
+
+    poll_frequency = config.get_config('poll frequency')
+    file_open = "Overlander\'s Pi GPS Log\nStarted at " + file_timestr + "\nPosition Polled " + poll_frequency +' times per second \n\n'
+    
     recording_file.write(file_open)
     start_record_loop()
 
