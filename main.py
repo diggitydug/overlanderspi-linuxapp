@@ -111,6 +111,7 @@ def end_record():
         entry = builder.get_object('record_file_name')
         entry.set_text(recording_file_name)
         recording_file.close()
+
         record_dialog.run()
     else: 
         recording_file.close()
