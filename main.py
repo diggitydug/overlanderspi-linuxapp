@@ -98,6 +98,7 @@ def start_record():
 
     poll_frequency = config.get_config('poll frequency')
     file_open = "Overlander\'s Pi GPS Log\nStarted at " + file_timestr + "\nPosition Polled " + poll_frequency +' times per minute \n\n'
+
     
     recording_file.write(file_open)
     start_record_loop()
